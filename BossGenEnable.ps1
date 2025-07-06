@@ -2,6 +2,8 @@
 $steamPath = "C:\Program Files (x86)\Steam\steamapps\common\Command and Conquer Generals Zero Hour\Data\Ini\ChallengeMode.ini"
 $originPath = "C:\Program Files (x86)\Origin Games\Command and Conquer Generals Zero Hour\Data\Ini\ChallengeMode.ini"
 $discPath = "C:\Program Files (x86)\EA Games\Command and Conquer Generals Zero Hour\Data\Ini\ChallengeMode.ini"
+$firstDecadePath = "C:\Program Files (x86)\EA Games\Command and Conquer The First Decade\Command and Conquer Generals Zero Hour\Data\Ini\ChallengeMode.ini"
+
 
 # Function to check and get the file path
 function Get-FilePath {
@@ -17,6 +19,7 @@ function Get-FilePath {
         Write-Host "1. Steam: $steamPath"
         Write-Host "2. Origin: $originPath"
         Write-Host "3. Disc: $discPath"
+        Write-Host "4. The First Decade: $firstDecadePath"
         
         # Prompt for the correct file path if it's not found
         $FilePath = Read-Host "Please enter the full path to the ChallengeMode.ini file"
@@ -447,9 +450,10 @@ function Update-GeneralPersona9 {
 }
 
 # Main logic to check for the ChallengeMode.ini file
-$challengeFilePath = Get-FilePath -FilePath $steamPath
+$challengeFilePath = Get-FilePath -possiblePaths @($steamPath, $originPath, $discPath, $firstDecadePath)
 
-# Call the function to only update if file exists
-if (Test-Path $challengeFilePath) {
-    Update-GeneralPersona9 $challengeFilePath
+if ($challengeFilePath) {
+    Write-Host "ChallengeMode.ini found at: $challengeFilePath"
+} else {
+    Write-Host "No valid ChallengeMode.ini file found." -ForegroundColor Red
 }
