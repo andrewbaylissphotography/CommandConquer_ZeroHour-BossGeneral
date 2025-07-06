@@ -8,7 +8,9 @@ A simple PowerShell-based tool to enable BossGeneral (General Leang) for Command
 
 ## ✅ Features
 
-- ✅ Sets 
+- ✅ Sets GeneralPersona9 (General Leang) StartsEnabled = yes
+- ✅ Uses Buit-in Ini files from INIZH.BIG
+- ✅ Playable in Generals Challenge and Skirmish
 
 ---
 
