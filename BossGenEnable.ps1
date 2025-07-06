@@ -4,39 +4,47 @@ $originPath = "C:\Program Files (x86)\Origin Games\Command and Conquer Generals 
 $discPath = "C:\Program Files (x86)\EA Games\Command and Conquer Generals Zero Hour\Data\Ini\ChallengeMode.ini"
 $firstDecadePath = "C:\Program Files (x86)\EA Games\Command and Conquer The First Decade\Command and Conquer Generals Zero Hour\Data\Ini\ChallengeMode.ini"
 
+# List of default locations
+$defaultLocations = @{
+    "Steam"         = $steamPath
+    "Origin"        = $originPath
+    "Disc"          = $discPath
+    "The First Decade" = $firstDecadePath
+}
 
 # Function to check and get the file path
 function Get-FilePath {
     param (
-        [string]$FilePath
+        [string[]]$possiblePaths
     )
     
-    if (-not (Test-Path $FilePath)) {
-        Write-Host "File not found at: $FilePath"
-        
-        # Show default locations and ask for user input
-        Write-Host "Attempting to find the file in the following default locations:"
-        Write-Host "1. Steam: $steamPath"
-        Write-Host "2. Origin: $originPath"
-        Write-Host "3. Disc: $discPath"
-        Write-Host "4. The First Decade: $firstDecadePath"
-        
-        # Prompt for the correct file path if it's not found
-        $FilePath = Read-Host "Please enter the full path to the ChallengeMode.ini file"
-        
-        # If the file still doesn't exist, create it
-        if (-not (Test-Path $FilePath)) {
-            Write-Host "File does not exist at $FilePath. Creating new file at this location..."
-            
-            # Create the directory if it doesn't exist
-            $directory = [System.IO.Path]::GetDirectoryName($FilePath)
-            if (-not (Test-Path $directory)) {
-                New-Item -ItemType Directory -Path $directory | Out-Null
-            }
-
-            # Create and write default content to the file
-            Create-DefaultIniFile -IniFilePath $FilePath
+    foreach ($path in $possiblePaths) {
+        if (Test-Path $path) {
+            Write-Host "File found at: $path"
+            return $path
         }
+    }
+
+    Write-Host "File not found in the following locations:"
+    $defaultLocations.GetEnumerator() | ForEach-Object {
+        Write-Host "$($_.Key): $($_.Value)"
+    }
+
+    # Prompt for the correct file path if it's not found
+    $FilePath = Read-Host "Please enter the full path to the ChallengeMode.ini file"
+    
+    # If the file still doesn't exist, create it
+    if (-not (Test-Path $FilePath)) {
+        Write-Host "File does not exist at $FilePath. Creating new file at this location..."
+
+        # Create the directory if it doesn't exist
+        $directory = [System.IO.Path]::GetDirectoryName($FilePath)
+        if (-not (Test-Path $directory)) {
+            New-Item -ItemType Directory -Path $directory | Out-Null
+        }
+
+        # Create and write default content to the file
+        Create-DefaultIniFile -IniFilePath $FilePath
     } else {
         Write-Host "File found at: $FilePath"
     }
